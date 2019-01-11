@@ -5,7 +5,7 @@
 #
 
 import sys
-from os import system
+#from os import system
 
 
 clrs = ['\033[1;34m',
@@ -92,7 +92,7 @@ def colorize(input_text, color="", colored=True, status=""):
 
 
 def clear_screen():
-    system('clear')
+    print("", end="")
 
 
 
