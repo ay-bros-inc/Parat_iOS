@@ -6,7 +6,7 @@
 
 import os
 import shutil
-import ConfigParser
+import configparser as ConfigParser
 from string import ascii_uppercase, ascii_lowercase, digits
 from random import choice
 from lib.ParatPrint import colorize, pprint, gray

@@ -7,8 +7,8 @@
 from os.path import abspath, join, dirname
 from lib.ParatPrint import colorize, pprint
 from lib.Version import __version__
-from ConfigParser import ConfigParser
-import urllib2
+from configparser import ConfigParser
+from urllib.request import urlopen
 
 
 def check_update():
@@ -28,7 +28,7 @@ def check_update():
     try:
 
         updateurl = 'https://raw.githubusercontent.com/micle-fm/Parat/master/conf/parat.version'
-        request = urllib2.urlopen(updateurl)
+        request = urlopen(updateurl)
         parat_version = str(request.read()).strip()
         request.close()
 

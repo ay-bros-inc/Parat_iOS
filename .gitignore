@@ -1,3 +1,6 @@
+.DS_Store
+__pycache__
+*.pyc
 *.log
 *.sqlite
 .Parat_history
@@ -103,7 +106,4 @@ ENV/
 
 # mypy
 .mypy_cache/
-<<<<<<< HEAD
 
-=======
->>>>>>> 7de292b23c77216df024fa9ae34a075a33edf52f

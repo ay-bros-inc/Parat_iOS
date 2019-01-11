@@ -28,7 +28,7 @@ def colorize(input_text, color="", colored=True, status=""):
     if input_text is None:
         return ""
 
-    if type(input_text) not in (str, unicode):
+    if type(input_text) not in (bytes, str):
         input_text = str(input_text)
 
     STOP_COLOR = '\033[0m'

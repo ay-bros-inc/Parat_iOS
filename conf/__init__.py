@@ -5,7 +5,7 @@
 #
 
 import os
-import ConfigParser
+import configparser
 from lib.ParatPrint import colorize
 
 
@@ -17,7 +17,7 @@ def config_file(*args):
             return os.path.abspath(os.path.join('conf', 'config.ini'))
 
         elif len(args) == 0:
-            config = ConfigParser.ConfigParser()
+            config = configparser.ConfigParser()
             config.read(os.path.join('conf', 'config.ini'))
             return config
 

@@ -6,7 +6,7 @@
 
 from time import sleep
 from random import randint, choice
-from ParatPrint import pprint, gray
+from .ParatPrint import pprint, gray
 from conf import config_file
 
 __author__   = 'micle'
@@ -83,7 +83,7 @@ def print_banner(banner = 0):
 
         b = b.format(__version__, __date__)
         clear = "\x1b[0m"
-    	colors = [31, 32, 33, 34, 35, 36]
+        colors = [31, 32, 33, 34, 35, 36]
 
         for line in b.split("\n"):
 

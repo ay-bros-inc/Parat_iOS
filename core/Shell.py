@@ -14,10 +14,10 @@ import logging
 import shlex
 import re
 #import pty
-import StringIO
+from io import StringIO
 import socket
 import signal
-import Queue
+import queue as Queue
 #import readline
 import threading
 import sqlite3
@@ -74,10 +74,10 @@ from modules import (
     ParatUninstall,
     ParatLogC
 )
-from Creds import ParatLogin
-from Creator import ParatGenerate
-from ArgumentParser import ParatArgParse
-from Handler import tumultuous
+from .Creds import ParatLogin
+from .Creator import ParatGenerate
+from .ArgumentParser import ParatArgParse
+from .Handler import tumultuous
 
 
 
@@ -88,7 +88,7 @@ log_name   = start_now.strftime("%Y-%m-%d")
 log_name  += ".log"
 
 # logging configure & prepare <file>
-logging.basicConfig(handler=file, level=logging.DEBUG)
+#logging.basicConfig(handler=file, level=logging.DEBUG)
 plog            = logging.getLogger(__name__)
 plog.propagate  = False
 log_file        = os.path.join('conf', 'logs', log_name)
@@ -371,7 +371,7 @@ class ParatShell(object):
 
     def listen_daemonize(self):
 
-        if not self.used_ports.has_key(self.port):
+        if not self.port in self.used_ports:
 
             self.used_ports[self.port] = 1
 
@@ -437,7 +437,7 @@ class ParatShell(object):
                 check_history_exist(self.history_path)
 
                 if not sys.stdin.closed:
-                    order_cm = raw_input(self.in_main_prompt).strip()
+                    order_cm = input(self.in_main_prompt).strip()
                 else:
                     self.close()
 
@@ -594,7 +594,7 @@ class ParatShell(object):
                 plog.info(str(e))#; break
                 sleep(0.1)
 
-            except Exception, e:
+            except Exception as e:
 
                 # except unknown errors
                 show_trace(self.verbose)
@@ -1392,7 +1392,7 @@ class ClientShell(ParatShell):
 
 
 
-            except (ValueError, socket.error), e:
+            except (ValueError, socket.error) as e:
 
                 if not process_bar.Stop:
                     process_bar.Stop = True

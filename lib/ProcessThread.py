@@ -23,7 +23,7 @@ class ParatProcessBar():
 
     def Run(self):
 
-        print self.message_text + "...  ",
+        print(self.message_text + "...  ")
         sys.stdout.flush(); i = 0
 
         while not self.Stop:
@@ -34,7 +34,7 @@ class ParatProcessBar():
             elif (i%4) == 3: sys.stdout.write('\b|')
             sys.stdout.flush(); sleep(0.2); i+=1
 
-        print ""; self.Stop = False
+        print(""); self.Stop = False
 
 
 

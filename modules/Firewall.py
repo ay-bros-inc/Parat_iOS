@@ -66,4 +66,4 @@ class ParatFirewall:
                 pprint("\n%s\n" % response) if self.colors else pprint("\n%s\n" % gray(response))
 
             except Exception as e:
-                print e
+                print(e)

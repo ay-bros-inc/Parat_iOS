@@ -5,7 +5,7 @@
 #
 
 import os
-import ConfigParser
+import configparser as ConfigParser
 from time import sleep
 from string import ascii_letters
 from random import choice

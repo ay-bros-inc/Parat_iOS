@@ -12,9 +12,9 @@ from core.Shell import start_loop
 from core.Creds import ParatLogin
 
 
-if version_info[0] != 2:
+if version_info[0] != 3:
     current_version = '.'.join(map(str, list(version_info[0:3])))
-    exit("Parat only support Python 2.x -> Found: %s" % current_version)
+    exit("Parat_iOS only support Python 3.x -> Found: %s" % current_version)
 
 
 
