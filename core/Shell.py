@@ -18,7 +18,7 @@ import StringIO
 import socket
 import signal
 import Queue
-import readline
+#import readline
 import threading
 import sqlite3
 
@@ -145,11 +145,7 @@ class ParatShell(object):
         self.ping_delay        = 1#s
         self.close             = exit
 
-        # read commands history from file
-        if os.path.isfile(self.history_path):
-            readline.read_history_file(self.history_path)
-        else:
-            open(self.history_path, 'a').close()
+        open(self.history_path, 'a').close()
 
         # log start config details
         plog.info("path: "        + str(self.ROOT))
@@ -255,39 +251,8 @@ class ParatShell(object):
 
 
     def shortcut(self, order_cm):
-
-        match = re.match(r"\!(\d+)$", order_cm)
-
-        if match is not None:
-
-            command_id = int(match.group().replace("!", ""))
-
-            try:
-                with open(self.history_path, 'r') as history:
-                    for line, command in enumerate(history.readlines()):
-
-                        if line == command_id:
-                            sys.stdin = StringIO.StringIO(command.strip())
-
-                history.close()
-
-            except Exception as error:
-                pprint(
-                    colorize(
-                        error,
-                        colored=self.colors,
-                        status="ERR"
-                    ), 1)
-        else:
-            pprint(
-                colorize(
-                    "Please enter commands id.\n",
-                    colored=self.colors,
-                    status="ERR"
-                ), 1)
-
-
-
+        # Needs readline
+        pass
 
     def update_banner(self, order_cm):
 
@@ -452,8 +417,8 @@ class ParatShell(object):
         prompt_q.put(self.in_main_prompt)
 
         completer = auto_complete(self.main_comands)
-        readline.set_completer(completer.complete)
-        readline.parse_and_bind('tab: complete')
+        #readline.set_completer(completer.complete)
+        #readline.parse_and_bind('tab: complete')
 
 
 
@@ -490,7 +455,8 @@ class ParatShell(object):
 
 
                 elif order_cm.startswith('!'):
-                    self.shortcut(order_cm)
+                    #self.shortcut(order_cm)
+                    pass
 
 
                 elif tolow(order_cm).startswith('banner'):
@@ -888,8 +854,8 @@ class ClientShell(ParatShell):
 
         def set_ctrl_completer():
             completer = auto_complete(self.target_comands)
-            readline.set_completer(completer.complete)
-            readline.parse_and_bind('tab: complete')
+            #readline.set_completer(completer.complete)
+            #readline.parse_and_bind('tab: complete')
 
 
         def get_ready_ctrl():

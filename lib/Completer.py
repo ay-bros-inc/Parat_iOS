@@ -4,7 +4,7 @@
 # see the COPYING file for the detailed licence terms
 #
 import glob
-import readline
+#import readline
 
 
 class auto_complete(object):  # Custom completer
@@ -13,27 +13,5 @@ class auto_complete(object):  # Custom completer
         self.options = sorted(options)
 
     def complete(self, text, state):
-
-        if state == 0:  # on first trigger, build possible matches
-
-            if text:  # cache matches (entries that start with entered text)
-
-                try:
-
-                    line = readline.get_line_buffer().split()
-                    self.matches = [s for s in self.options if s and s.startswith(text)]
-                    [self.matches.append(x) for x in glob.glob(text + '*')]
-
-                except Exception as e:
-                    pass#    print(e)
-
-
-            else:  # no text entered, all matches possible
-                self.matches = self.options[:]
-
-        # return match indexed by state
-        try:
-            return self.matches[state] + " "
-
-        except IndexError:
-            return None
+        # Needs readline
+        return None
