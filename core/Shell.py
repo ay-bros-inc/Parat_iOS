@@ -13,7 +13,7 @@ import sys
 import logging
 import shlex
 import re
-import pty
+#import pty
 import StringIO
 import socket
 import signal
